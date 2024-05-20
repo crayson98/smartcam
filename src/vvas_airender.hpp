@@ -14,6 +14,45 @@
  * limitations under the License.
  */
 
+#define CL_HPP_CL_1_2_DEFAULT_BUILD
+#define CL_HPP_TARGET_OPENCL_VERSION 120
+#define CL_HPP_MINIMUM_OPENCL_VERSION 120
+#define CL_HPP_ENABLE_PROGRAM_CONSTRUCTION_FROM_ARRAY_COMPATIBILITY 1
+
+#include <CL/opencl.hpp>
+
+struct OpenCLObject{
+    cl::Context context;
+    cl::CommandQueue q;
+    cl::Kernel krnl_conv;
+    cl::Buffer buffer_in;
+    cl::Buffer buffer_out;
+};
+ 
+class CONV{
+private:
+ 
+public:
+void conv_kernel_run(unsigned int width, unsigned int height, unsigned int *resptr);
+void conv_kernel_init();
+uint8_t *sptr; //= (uint16_t*)malloc(sizeof(uint16_t) * FEATURE_SIZE * MAX_TRACKS * MAX_SAMPLES);
+uint8_t *rptr; //= (uint16_t*)malloc(sizeof(uint16_t) * MAX_TRACKS * MAX_FEATURES);
+OpenCLObject *ocl_object;
+
+};
+ 
+// Customized buffer allocation for 4K boundary alignment
+template <typename T>
+struct aligned_allocator {
+    using value_type = T;
+    T* allocate(std::size_t num) {
+        void* ptr = nullptr;
+        if (posix_memalign(&ptr, 4096, num * sizeof(T))) throw std::bad_alloc();
+        return reinterpret_cast<T*>(ptr);
+    }
+    void deallocate(T* p, std::size_t num) { free(p); }
+};
+
 #ifndef __VVAS_AIRENDER_H__
 #define __VVAS_AIRENDER_H__
 
