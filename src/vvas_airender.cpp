@@ -37,6 +37,38 @@ using namespace std;
 #define MAX_ALLOWED_CLASS 20
 #define MAX_ALLOWED_LABELS 20
 
+#define OCL_CHECK(error, call)                                                                   \
+    call;                                                                                        \
+    if (error != CL_SUCCESS) {                                                                   \
+        printf("%s:%d Error calling " #call ", error code is: %d\n", __FILE__, __LINE__, error); \
+        exit(EXIT_FAILURE);                                                                      \
+    }
+
+//#include "test.h"
+//#include "features.h"
+//#include "samples.h"
+#include <fstream>
+#include <iostream>
+#include <stdlib.h>
+#include <chrono>
+
+
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <stdint.h>
+
+static const unsigned int MAX_WIDTH = 1920;
+static const unsigned int MAX_HEIGTH = 1080;
+static const unsigned int CHANNELS = 3;
+
+static const std::string error_message =
+    "Error: Result mismatch:\n"
+    "i = %d CPU result = %d Device result = %d\n";
+
+
+
+
 struct color
 {
   unsigned int blue;
@@ -83,7 +115,132 @@ struct vvas_xoverlaypriv
   Clock::time_point startClk;
 };
 
+void CONV::conv_kernel_init()
+{
+    std::string xclbinFilename = "/lib/firmware/xilinx/kv260-smartcam/kv260-smartcam.xclbin";
+  
+    std::vector<cl::Device> devices;
+    //OpenCLObject *ocl_object = new OpenCLObject(); 	//We want to give this object to runner func
+    this->ocl_object = new OpenCLObject(); 	//We want to give this object to runner func
+    cl::Program program;
+    cl_int err;
+    std::vector<cl::Platform> platforms;
+    bool found_device = false;
 
+    // traversing all Platforms To find Xilinx Platform and targeted
+    // Device in Xilinx Platform
+    cl::Platform::get(&platforms);
+    for (size_t i = 0; (i < platforms.size()) & (found_device == false); i++) {
+        cl::Platform platform = platforms[i];
+        std::string platformName = platform.getInfo<CL_PLATFORM_NAME>();
+        if (platformName == "Xilinx") {
+            devices.clear();
+            platform.getDevices(CL_DEVICE_TYPE_ACCELERATOR, &devices);
+            if (devices.size()) {
+                found_device = true;
+                break;
+            }
+        }
+    }
+    if (found_device == false) {
+        std::cout << "Error: Unable to find Target Device " << std::endl;
+    }
+
+    std::cout << "INFO: Reading " << xclbinFilename << std::endl;
+    FILE* fp;
+    if ((fp = fopen(xclbinFilename.c_str(), "r")) == nullptr) {
+        printf("ERROR: %s xclbin not available please build\n", xclbinFilename.c_str());
+        exit(EXIT_FAILURE);
+    }
+    // Load xclbin
+    std::cout << "Loading: '" << xclbinFilename << "'\n";
+    std::ifstream bin_file(xclbinFilename, std::ifstream::binary);
+    bin_file.seekg(0, bin_file.end);
+    unsigned nb = bin_file.tellg();
+    bin_file.seekg(0, bin_file.beg);
+    char* buf = new char[nb];
+    bin_file.read(buf, nb);
+
+    // Creating Program from Binary File
+    cl::Program::Binaries bins;
+    bins.push_back({buf, nb});
+    bool valid_device = false;
+    for (unsigned int i = 0; i < devices.size(); i++) {
+        auto device = devices[i];
+        // Creating Context and Command Queue for selected Device
+        OCL_CHECK(err, ocl_object->context = cl::Context(device, nullptr, nullptr, nullptr, &err));
+        OCL_CHECK(err, ocl_object->q = cl::CommandQueue(ocl_object->context, device, CL_QUEUE_PROFILING_ENABLE, &err));
+        std::cout << "Trying to program device[" << i << "]: " << device.getInfo<CL_DEVICE_NAME>() << std::endl;
+        cl::Program program(ocl_object->context, {device}, bins, nullptr, &err);
+        if (err != CL_SUCCESS) {
+            std::cout << "Failed to program device[" << i << "] with xclbin file!\n";
+        } else {
+            std::cout << "Device[" << i << "]: program successful!\n";
+            OCL_CHECK(err, ocl_object->krnl_conv = cl::Kernel(program, "conv", &err));
+            valid_device = true;
+            break; // we break because we found a valid device
+        }
+    }
+    if (!valid_device) {
+        std::cout << "Failed to program any device found, exit!\n";
+    }
+
+
+    uint64_t buffer_in_size = MAX_HEIGTH * MAX_WIDTH * CHANNELS * sizeof(unsigned int);
+    uint64_t buffer_out_size = MAX_HEIGTH * MAX_WIDTH * CHANNELS * sizeof(unsigned int);
+
+
+    OCL_CHECK(err, ocl_object->buffer_in = cl::Buffer(ocl_object->context,  CL_MEM_ALLOC_HOST_PTR | CL_MEM_READ_ONLY, buffer_in_size, nullptr, &err));
+    OCL_CHECK(err, ocl_object->buffer_out = cl::Buffer(ocl_object->context, CL_MEM_ALLOC_HOST_PTR | CL_MEM_WRITE_ONLY, buffer_out_size, nullptr, &err));
+
+
+    uint8_t narg = 0;
+    OCL_CHECK(err, err = ocl_object->krnl_conv.setArg(narg++, ocl_object->buffer_in));
+    OCL_CHECK(err, err = ocl_object->krnl_conv.setArg(narg++, ocl_object->buffer_out));
+    OCL_CHECK(err, err = ocl_object->krnl_conv.setArg(narg++, MAX_WIDTH));
+    OCL_CHECK(err, err = ocl_object->krnl_conv.setArg(narg++, MAX_HEIGTH));
+
+    
+    OCL_CHECK(err,
+              this->sptr = (uint8_t*)ocl_object->q.enqueueMapBuffer(ocl_object->buffer_in, CL_TRUE, CL_MAP_WRITE, 0, buffer_in_size, NULL, NULL, &err));
+    OCL_CHECK(err, this->rptr = (uint8_t*)ocl_object->q.enqueueMapBuffer(ocl_object->buffer_out, CL_TRUE, CL_MAP_READ, 0, buffer_out_size, NULL, NULL, &err));
+    
+
+   
+
+  //return ocl_object;
+}
+
+void CONV::conv_kernel_run(unsigned int width, unsigned int height, unsigned int *resptr)
+{
+
+    std::cout << "START" << std::endl;
+    cl_int err;
+
+    OCL_CHECK(err, err = ocl_object->q.enqueueMigrateMemObjects({ocl_object->buffer_in}, 0 )); //0 means from host
+    OCL_CHECK(err, err = ocl_object->krnl_conv.setArg(0, ocl_object->buffer_in));
+    OCL_CHECK(err, err = ocl_object->krnl_conv.setArg(1, ocl_object->buffer_out));
+    OCL_CHECK(err, err = ocl_object->krnl_conv.setArg(2, width));
+    OCL_CHECK(err, err = ocl_object->krnl_conv.setArg(3, height));
+
+    std::cout << "START2" << std::endl;
+
+    //printf("sample_in_cmx_host: %f\n", (float)(this->sptr[0]/(float)32768));
+    //printf("feature_in_cmx_host: %f\n", (float)(this->fptr[0]/(float)32768));
+    std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
+    OCL_CHECK(err, err = ocl_object->q.enqueueTask(ocl_object->krnl_conv));
+    
+    std::cout << "START3" << std::endl;
+
+    OCL_CHECK(err, ocl_object->q.finish());
+
+    std::cout << "START4" << std::endl;
+    std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
+    OCL_CHECK(err, ocl_object->q.enqueueMigrateMemObjects({ocl_object->buffer_out}, CL_MIGRATE_MEM_OBJECT_HOST));
+
+    //printf("no problem here\n");
+    std::cout << "FINISH " << std::endl;
+}
 
 /* Check if the given classification is to be filtered */
 int
