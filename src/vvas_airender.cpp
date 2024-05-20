@@ -48,9 +48,9 @@ using namespace std;
 //#include "features.h"
 //#include "samples.h"
 #include <fstream>
-#include <iostream>
-#include <stdlib.h>
-#include <chrono>
+//#include <iostream>
+//#include <stdlib.h>
+//#include <chrono>
 
 
 #include <stdio.h>
@@ -66,7 +66,11 @@ static const std::string error_message =
     "Error: Result mismatch:\n"
     "i = %d CPU result = %d Device result = %d\n";
 
+unsigned int width = 1920;
+unsigned int height = 1080;
+unsigned int *resptr;
 
+    CONV conv;
 
 
 struct color
@@ -408,6 +412,11 @@ overlay_node_foreach (GNode * node, gpointer kpriv_ptr)
           Point (prediction->bbox.width + prediction->bbox.x,
               prediction->bbox.height + prediction->bbox.y), Scalar (clr.blue,
               clr.green, clr.red), kpriv->line_thickness, 1, 0);
+        
+        conv.conv_kernel_init();
+          this->sptr = Point (prediction->bbox.x,prediction->bbox.y)
+        conv.conv_kernel_run(bbox.width, bbox.height, resptr);
+          this->rptr = Point (prediction->bbox.x,prediction->bbox.y)
       }
 
       if (label_present) {
