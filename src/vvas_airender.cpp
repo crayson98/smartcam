@@ -206,8 +206,8 @@ void CONV::conv_kernel_init()
 
     
     OCL_CHECK(err,
-              this->sptr = (uint8_t*)ocl_object->q.enqueueMapBuffer(ocl_object->buffer_in, CL_TRUE, CL_MAP_WRITE, 0, buffer_in_size, NULL, NULL, &err));
-    OCL_CHECK(err, this->rptr = (uint8_t*)ocl_object->q.enqueueMapBuffer(ocl_object->buffer_out, CL_TRUE, CL_MAP_READ, 0, buffer_out_size, NULL, NULL, &err));
+              frameinfo->image.data = (uint8_t*)ocl_object->q.enqueueMapBuffer(ocl_object->buffer_in, CL_TRUE, CL_MAP_WRITE, 0, buffer_in_size, NULL, NULL, &err));
+    OCL_CHECK(err, frameinfo->image.data = (uint8_t*)ocl_object->q.enqueueMapBuffer(ocl_object->buffer_out, CL_TRUE, CL_MAP_READ, 0, buffer_out_size, NULL, NULL, &err));
     
 
    
@@ -414,9 +414,7 @@ overlay_node_foreach (GNode * node, gpointer kpriv_ptr)
               clr.green, clr.red), kpriv->line_thickness, 1, 0);
         
         conv.conv_kernel_init();
-          this->sptr = Point (prediction->bbox.x,prediction->bbox.y)
-        conv.conv_kernel_run(bbox.width, bbox.height, resptr);
-          this->rptr = Point (prediction->bbox.x,prediction->bbox.y)
+        conv.conv_kernel_run(200, 200, resptr);
       }
 
       if (label_present) {
