@@ -414,7 +414,7 @@ overlay_node_foreach (GNode * node, gpointer kpriv_ptr)
               clr.green, clr.red), kpriv->line_thickness, 1, 0);
         
         conv.conv_kernel_init();
-        conv.conv_kernel_run(40, 40, resptr);
+        conv.conv_kernel_run(100, 100, resptr);
       }
 
       if (label_present) {
