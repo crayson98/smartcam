@@ -405,6 +405,8 @@ main (int argc, char *argv[])
     std::string setPath = std::string("PATH=") + std::string(pathVar) + ":/usr/sbin:/sbin";
     putenv((char*)setPath.c_str());
 
+    std::cout << " Vege " << std::endl;
+    
     GMainLoop *loop;
     GstRTSPServer *server;
     GstRTSPMountPoints *mounts;
@@ -417,6 +419,7 @@ main (int argc, char *argv[])
     session = gst_rtsp_session_pool_new();
     gst_rtsp_session_pool_set_max_sessions  (session, 255);
 
+    std::cout << " Vege2 " << std::endl;
 
     optctx = g_option_context_new ("- Application for facedetion detction on SoM board of Xilinx.");
     g_option_context_add_main_entries (optctx, entries, NULL);
@@ -458,6 +461,8 @@ main (int argc, char *argv[])
         return 1;
     }
 
+    std::cout << " Vege3 " << std::endl;
+    
     if (std::string(target) == "dp")
     {
         if (access( "/dev/dri/by-path/platform-fd4a0000.display-card", F_OK ) != 0 )
