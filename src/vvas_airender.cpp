@@ -314,6 +314,14 @@ get_label_text (GstInferenceClassification * c, vvas_xoverlaypriv * kpriv,
 static gboolean
 overlay_node_foreach (GNode * node, gpointer kpriv_ptr)
 {
+  static int counter = 0;
+
+  if(counter == 0)
+  {
+    conv.conv_kernel_init();
+    counter++;
+  }
+
   g_print ("overlay node eleje\n");
   vvas_xoverlaypriv *kpriv = (vvas_xoverlaypriv *) kpriv_ptr;
   struct overlayframe_info *frameinfo = &(kpriv->frameinfo);
