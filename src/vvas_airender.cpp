@@ -368,7 +368,7 @@ overlay_node_foreach (GNode * node, gpointer kpriv_ptr)
         prediction->prediction_id,
         label_present ? classification->class_label : NULL,
         classification->class_id, prediction->bbox.x, prediction->bbox.y,
-        prediction->bbox.width + predg_print ("START\n");iction->bbox.x,
+        prediction->bbox.width + prediction->bbox.x,
         prediction->bbox.height + prediction->bbox.y,
         classification->class_prob);
 
