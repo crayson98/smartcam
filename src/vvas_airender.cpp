@@ -72,6 +72,7 @@ unsigned int *resptr;
 
     CONV conv;
 
+conv.conv_kernel_init();
 
 struct color
 {
@@ -206,8 +207,8 @@ void CONV::conv_kernel_init()
 
     
     OCL_CHECK(err,
-              frameinfo->image.data = (uint8_t*)ocl_object->q.enqueueMapBuffer(ocl_object->buffer_in, CL_TRUE, CL_MAP_WRITE, 0, buffer_in_size, NULL, NULL, &err));
-    OCL_CHECK(err, frameinfo->image.data = (uint8_t*)ocl_object->q.enqueueMapBuffer(ocl_object->buffer_out, CL_TRUE, CL_MAP_READ, 0, buffer_out_size, NULL, NULL, &err));
+              this->sptr = (uint8_t*)ocl_object->q.enqueueMapBuffer(ocl_object->buffer_in, CL_TRUE, CL_MAP_WRITE, 0, buffer_in_size, NULL, NULL, &err));
+    OCL_CHECK(err, this->rptr = (uint8_t*)ocl_object->q.enqueueMapBuffer(ocl_object->buffer_out, CL_TRUE, CL_MAP_READ, 0, buffer_out_size, NULL, NULL, &err));
     
 
    
@@ -414,8 +415,38 @@ overlay_node_foreach (GNode * node, gpointer kpriv_ptr)
               prediction->bbox.height + prediction->bbox.y), Scalar (clr.blue,
               clr.green, clr.red), kpriv->line_thickness, 1, 0);
         std::cout << " Kezdodik " << std::endl;
-        conv.conv_kernel_init();
-        conv.conv_kernel_run(300, 300, resptr);
+        
+      int x = prediction->bbox.x;
+      int y = prediction->bbox.y;
+      int width = prediction->bbox.width;
+      int height = prediction->bbox.height;
+
+      // Ensure the ROI is within the bounds of the image
+      cv::Rect roi(x, y, width, height);
+      roi &= cv::Rect(0, 0, frameinfo->image.cols, frameinfo->image.rows);
+
+      // Get the number of channels in the image
+      roiChannels = 3;
+
+      // Allocate memory for the ROI data
+      roiWidth = roi.width;
+      roiHeight = roi.height;
+      int roiSize = roiWidth * roiHeight * roiChannels;
+      roiData = new uchar[roiSize];
+
+      // Use memcpy to copy each row of the ROI to the new buffer
+      for (int row = 0; row < roiHeight; ++row) {
+                memcpy(roiData + row * roiWidth * roiChannels,
+                      this->sptr<uint8_t>(roi.y + row) + roi.x * roiChannels,
+                      roiWidth * roiChannels);
+        }
+
+  
+
+      conv.conv_kernel_run(roiWidth, roiHeight, nullptr);
+      LOG_MESSAGE(LOG_LEVEL_DEBUG, "First element value: %d", this->rptr[0]);
+
+
         std::cout << " Vege " << std::endl;
       }
 
