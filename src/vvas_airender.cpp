@@ -467,7 +467,7 @@ overlay_node_foreach (GNode * node, gpointer kpriv_ptr)
               prediction->bbox.height + prediction->bbox.y), Scalar (clr.blue,
               clr.green, clr.red), kpriv->line_thickness, 1, 0);
         std::cout << " Kezdodik " << std::endl;
-      LOG_MESSAGE(LOG_LEVEL_WARNING, "First element value: %d", this->rptr[0]);
+      //LOG_MESSAGE(LOG_LEVEL_WARNING, "First element value: %d", this->rptr[0]);
       g_print ("START\n");
 
 
