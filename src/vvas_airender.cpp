@@ -406,15 +406,17 @@ overlay_node_foreach (GNode * node, gpointer kpriv_ptr)
       LOG_MESSAGE (LOG_LEVEL_DEBUG, "Drawing rectangle for BGR image");
 
       if (!(!prediction->bbox.x && !prediction->bbox.y)) {
+          std::cout << " Start " << std::endl;
         /* Draw rectangle over the dectected object */
         rectangle (frameinfo->image, Point (prediction->bbox.x,
               prediction->bbox.y),
           Point (prediction->bbox.width + prediction->bbox.x,
               prediction->bbox.height + prediction->bbox.y), Scalar (clr.blue,
               clr.green, clr.red), kpriv->line_thickness, 1, 0);
-        
+        std::cout << " Kezdodik " << std::endl;
         conv.conv_kernel_init();
-        conv.conv_kernel_run(200, 200, resptr);
+        conv.conv_kernel_run(300, 300, resptr);
+        std::cout << " Vege " << std::endl;
       }
 
       if (label_present) {
