@@ -437,13 +437,12 @@ overlay_node_foreach (GNode * node, gpointer kpriv_ptr)
       roi &= cv::Rect(0, 0, frameinfo->image.cols, frameinfo->image.rows);
 
       // Get the number of channels in the image
-      roiChannels = 3;
+      uint8_t roiChannels = 3;
 
       // Allocate memory for the ROI data
-      roiWidth = roi.width;
-      roiHeight = roi.height;
+      int roiWidth = roi.width;
+      int roiHeight = roi.height;
       int roiSize = roiWidth * roiHeight * roiChannels;
-      roiData = new uchar[roiSize];
 
       // Use memcpy to copy each row of the ROI to the new buffer
       for (int row = 0; row < roiHeight; ++row) {
