@@ -381,7 +381,9 @@ overlay_node_foreach (GNode * node, gpointer kpriv_ptr)
         int new_ymin = floor(prediction->bbox.y / 2) * 2;
         int new_xmax = floor((prediction->bbox.width + prediction->bbox.x) / 2) * 2;
         int new_ymax = floor((prediction->bbox.height + prediction->bbox.y) / 2) * 2;
-        
+    unsigned char yScalar;
+        unsigned short uvScalar;
+
     if (!(!prediction->bbox.x && !prediction->bbox.y)) {
         g_print("kernel init elott\n");
         conv.conv_kernel_init();
@@ -455,8 +457,7 @@ overlay_node_foreach (GNode * node, gpointer kpriv_ptr)
         }
 
         // Draw rectangle over the detected object
-        unsigned char yScalar;
-        unsigned short uvScalar;
+        
         convert_rgb_to_yuv_clrs(clr, &yScalar, &uvScalar);
 
         
