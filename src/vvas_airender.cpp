@@ -426,7 +426,7 @@ overlay_node_foreach (GNode * node, gpointer kpriv_ptr)
         }
 
         g_print("kernel run elott\n");
-        conv.conv_kernel_run(100, 100, nullptr);
+        conv.conv_kernel_run(roiWidth, roiHeight, nullptr);
         g_print("kernel run utan\n");
         g_print("elso elem: %d\n", conv.rptr[0]);
 
