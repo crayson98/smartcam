@@ -471,7 +471,7 @@ overlay_node_foreach (GNode * node, gpointer kpriv_ptr)
       g_print ("START\n");
 
 
-      writeRawRGBImage("/home/smartcam/conv_color.raw", conv.rptr);
+      writeRawRGBImage("/home/smartcam/conv_color.raw", conv.rptr);14r4e3ee
 
       
       }
