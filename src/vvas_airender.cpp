@@ -73,7 +73,7 @@ unsigned int height = 1080;
 unsigned int *resptr;
 
 
-
+CONV conv;
 
 
 struct color

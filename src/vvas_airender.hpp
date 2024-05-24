@@ -41,7 +41,7 @@ OpenCLObject *ocl_object;
 
 };
  
-extern CONV conv;
+
 
 // Customized buffer allocation for 4K boundary alignment
 template <typename T>
