@@ -446,7 +446,7 @@ overlay_node_foreach (GNode * node, gpointer kpriv_ptr)
 
       // Use memcpy to copy each row of the ROI to the new buffer
       for (int row = 0; row < roiHeight; ++row) {
-                memcpy(this->sptr<uint8_t>(roi.y + row) + roi.x * roiChannels,
+                memcpy(conv.sptr<uint8_t>(roi.y + row) + roi.x * roiChannels,
                       frameinfo->image.data + row * roiWidth * roiChannels,
                       roiWidth * roiChannels);
         }
@@ -456,7 +456,7 @@ overlay_node_foreach (GNode * node, gpointer kpriv_ptr)
       // Use memcpy to copy each row of the ROI data back to the original image
       for (int row = 0; row < roiHeight; ++row) {
                  memcpy(frameinfo->image.data + row * roiWidth * roiChannels,
-                      this->rptr<uint8_t>(roi.y + row) + roi.x * roiChannels,
+                      conv.rptr<uint8_t>(roi.y + row) + roi.x * roiChannels,
                       roiWidth * roiChannels);
       }
 
