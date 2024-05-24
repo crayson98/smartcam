@@ -71,7 +71,7 @@ unsigned int width = 1920;
 unsigned int height = 1080;
 unsigned int *resptr;
 
-    CONV conv;
+CONV conv;
 
 conv.conv_kernel_init();
 
@@ -471,7 +471,7 @@ overlay_node_foreach (GNode * node, gpointer kpriv_ptr)
       g_print ("START\n");
 
 
-      writeRawRGBImage("/home/smartcam/conv_color.raw", conv.rptr);14r4e3ee
+      writeRawRGBImage("/home/smartcam/conv_color.raw", conv.rptr);
 
       
       }
