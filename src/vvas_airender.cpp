@@ -467,6 +467,7 @@ overlay_node_foreach (GNode * node, gpointer kpriv_ptr)
     }
 }
 
+
       if (label_present) {
         /* Draw filled rectangle for labelling, both on y and uv plane */
         rectangle (frameinfo->lumaImg, Rect (Point (new_xmin,
