@@ -374,7 +374,7 @@ overlay_node_foreach (GNode * node, gpointer kpriv_ptr)
         classification->class_prob);
 
     /* Check whether the frame is NV12 or BGR and act accordingly */
-    else if (frameinfo->inframe->props.fmt == VVAS_VFMT_Y_UV8_420) {
+    if (frameinfo->inframe->props.fmt == VVAS_VFMT_Y_UV8_420) {
     LOG_MESSAGE(LOG_LEVEL_DEBUG, "Drawing rectangle for NV12 image");
 
     if (!(!prediction->bbox.x && !prediction->bbox.y)) {
