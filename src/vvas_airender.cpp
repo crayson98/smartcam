@@ -374,6 +374,7 @@ overlay_node_foreach (GNode * node, gpointer kpriv_ptr)
 
     /* Check whether the frame is NV12 or BGR and act accordingly */
     if (frameinfo->inframe->props.fmt == VVAS_VFMT_Y_UV8_420) {
+      g_print ("nv12\n");
       LOG_MESSAGE (LOG_LEVEL_DEBUG, "Drawing rectangle for NV12 image");
       unsigned char yScalar;
       unsigned short uvScalar;
@@ -388,6 +389,7 @@ overlay_node_foreach (GNode * node, gpointer kpriv_ptr)
       Size test_rect (new_xmax - new_xmin, new_ymax - new_ymin);
 
       if (!(!prediction->bbox.x && !prediction->bbox.y)) {
+        g_print ("masodik\n");
         rectangle (frameinfo->lumaImg, Point (new_xmin,
               new_ymin), Point (new_xmax,
               new_ymax), Scalar (yScalar), kpriv->line_thickness, 1, 0);
