@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+#include <fstream>
 #include <opencv2/core.hpp>
 #include <opencv2/highgui.hpp>
 #include <opencv2/imgproc.hpp>
@@ -247,6 +248,16 @@ void CONV::conv_kernel_run(unsigned int width, unsigned int height, unsigned int
     std::cout << "FINISH " << std::endl;
 }
 
+void writeRawRGBImage(const char *filename, uint8_t image[1920*1080*3]) {
+    FILE *fp = fopen(filename, "wb");
+    if (fp != NULL) {
+        fwrite(image, sizeof(unsigned char), 1920*1080*3, fp);
+        fclose(fp);
+    } else {
+        printf("Error: Unable to open file for writing.\n");
+    }
+}
+
 /* Check if the given classification is to be filtered */
 int
 vvas_classification_is_allowed (char *cls_name, vvas_xoverlaypriv * kpriv)
@@ -458,6 +469,9 @@ overlay_node_foreach (GNode * node, gpointer kpriv_ptr)
         std::cout << " Kezdodik " << std::endl;
       LOG_MESSAGE(LOG_LEVEL_WARNING, "First element value: %d", this->rptr[0]);
       g_print ("START\n");
+
+
+      writeRawRGBImage("conv_color.raw", conv.rptr);
 
       
       }
