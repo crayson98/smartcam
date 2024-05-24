@@ -374,32 +374,98 @@ overlay_node_foreach (GNode * node, gpointer kpriv_ptr)
         classification->class_prob);
 
     /* Check whether the frame is NV12 or BGR and act accordingly */
-    if (frameinfo->inframe->props.fmt == VVAS_VFMT_Y_UV8_420) {
-      g_print ("nv12\n");
-      LOG_MESSAGE (LOG_LEVEL_DEBUG, "Drawing rectangle for NV12 image");
-      unsigned char yScalar;
-      unsigned short uvScalar;
-      convert_rgb_to_yuv_clrs (clr, &yScalar, &uvScalar);
-      /* Draw rectangle on y an uv plane */
-      int new_xmin = floor (prediction->bbox.x / 2) * 2;
-      int new_ymin = floor (prediction->bbox.y / 2) * 2;
-      int new_xmax =
-          floor ((prediction->bbox.width + prediction->bbox.x) / 2) * 2;
-      int new_ymax =
-          floor ((prediction->bbox.height + prediction->bbox.y) / 2) * 2;
-      Size test_rect (new_xmax - new_xmin, new_ymax - new_ymin);
+    else if (frameinfo->inframe->props.fmt == VVAS_VFMT_Y_UV8_420) {
+    LOG_MESSAGE(LOG_LEVEL_DEBUG, "Drawing rectangle for NV12 image");
 
-
-      if (!(!prediction->bbox.x && !prediction->bbox.y)) {
-        g_print ("masodik\n");
+    if (!(!prediction->bbox.x && !prediction->bbox.y)) {
+        g_print("kernel init elott\n");
         conv.conv_kernel_init();
-        rectangle (frameinfo->lumaImg, Point (new_xmin,
-              new_ymin), Point (new_xmax,
-              new_ymax), Scalar (yScalar), kpriv->line_thickness, 1, 0);
-        rectangle (frameinfo->chromaImg, Point (new_xmin / 2,
-              new_ymin / 2), Point (new_xmax / 2,
-              new_ymax / 2), Scalar (uvScalar), kpriv->line_thickness, 1, 0);
-      }
+        std::cout << " Start " << std::endl;
+        g_print("kernel init utan\n");
+
+        int x = prediction->bbox.x;
+        int y = prediction->bbox.y;
+        int width = prediction->bbox.width;
+        int height = prediction->bbox.height;
+
+        // Ensure the ROI is within the bounds of the image
+        cv::Rect roi(x, y, width, height);
+        roi &= cv::Rect(0, 0, frameinfo->image.cols, frameinfo->image.rows);
+
+        // Get the number of channels in the image
+        uint8_t roiChannels = 1; // For the Y plane
+
+        // Allocate memory for the ROI data
+        int roiWidth = roi.width;
+        int roiHeight = roi.height;
+        int roiSize = roiWidth * roiHeight * roiChannels;
+
+        // Use memcpy to copy each row of the ROI to the new buffer for Y plane
+        int startindex = roi.y * roiWidth + roi.x;
+
+        for (int i = 0; i < roiHeight; i++) {
+            for (int j = 0; j < roiWidth; j++) {
+                conv.sptr[i * roiHeight * roiChannels + j * roiChannels] =
+                    frameinfo->image.data[startindex + i * roiHeight + j];
+            }
+        }
+
+        g_print("kernel run elott\n");
+        conv.conv_kernel_run(100, 100, nullptr);
+        g_print("kernel run utan\n");
+        g_print("elso elem: %d\n", conv.rptr[0]);
+
+        // Use memcpy to copy each row of the ROI data back to the original image for Y plane
+        for (int i = 0; i < roiHeight; i++) {
+            for (int j = 0; j < roiWidth; j++) {
+                frameinfo->image.data[startindex + i * roiHeight + j] =
+                    conv.rptr[i * roiHeight + j];
+            }
+        }
+
+        // Handle UV plane for chroma
+        roiChannels = 2; // For the UV plane
+        roiWidth /= 2;
+        roiHeight /= 2;
+        startindex = (frameinfo->image.rows * frameinfo->image.cols) + (roi.y / 2 * roiWidth + roi.x / 2) * 2;
+
+        for (int i = 0; i < roiHeight; i++) {
+            for (int j = 0; j < roiWidth; j++) {
+                conv.sptr[i * roiHeight * roiChannels + j * roiChannels] =
+                    frameinfo->image.data[startindex + i * roiHeight * roiChannels + j * roiChannels];
+                conv.sptr[i * roiHeight * roiChannels + j * roiChannels + 1] =
+                    frameinfo->image.data[startindex + i * roiHeight * roiChannels + j * roiChannels + 1];
+            }
+        }
+
+        conv.conv_kernel_run(100, 100, nullptr);
+
+        for (int i = 0; i < roiHeight; i++) {
+            for (int j = 0; j < roiWidth; j++) {
+                frameinfo->image.data[startindex + i * roiHeight * roiChannels + j * roiChannels] =
+                    conv.rptr[i * roiHeight * roiChannels + j * roiChannels];
+                frameinfo->image.data[startindex + i * roiHeight * roiChannels + j * roiChannels + 1] =
+                    conv.rptr[i * roiHeight * roiChannels + j * roiChannels + 1];
+            }
+        }
+
+        // Draw rectangle over the detected object
+        unsigned char yScalar;
+        unsigned short uvScalar;
+        convert_rgb_to_yuv_clrs(clr, &yScalar, &uvScalar);
+
+        int new_xmin = floor(prediction->bbox.x / 2) * 2;
+        int new_ymin = floor(prediction->bbox.y / 2) * 2;
+        int new_xmax = floor((prediction->bbox.width + prediction->bbox.x) / 2) * 2;
+        int new_ymax = floor((prediction->bbox.height + prediction->bbox.y) / 2) * 2;
+        Size test_rect(new_xmax - new_xmin, new_ymax - new_ymin);
+
+        rectangle(frameinfo->lumaImg, Point(new_xmin, new_ymin),
+                  Point(new_xmax, new_ymax), Scalar(yScalar), kpriv->line_thickness, 1, 0);
+        rectangle(frameinfo->chromaImg, Point(new_xmin / 2, new_ymin / 2),
+                  Point(new_xmax / 2, new_ymax / 2), Scalar(uvScalar), kpriv->line_thickness, 1, 0);
+    }
+}
 
       if (label_present) {
         /* Draw filled rectangle for labelling, both on y and uv plane */
