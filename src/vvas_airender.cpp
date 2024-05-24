@@ -443,7 +443,7 @@ overlay_node_foreach (GNode * node, gpointer kpriv_ptr)
 
   
 
-      conv.conv_kernel_run(roiWidth, roiHeight, nullptr);
+      conv.conv_kernel_run(300, 300, nullptr);
       LOG_MESSAGE(LOG_LEVEL_DEBUG, "First element value: %d", this->rptr[0]);
 
 
