@@ -124,6 +124,7 @@ struct vvas_xoverlaypriv
 
 void CONV::conv_kernel_init()
 {
+    g_print ("init eleje\n");
     std::string xclbinFilename = "/lib/firmware/xilinx/kv260-smartcam/kv260-smartcam.xclbin";
   
     std::vector<cl::Device> devices;
@@ -214,7 +215,7 @@ std::cout << "START11" << std::endl;
     
 
    
-
+  g_print ("init vege\n");
   //return ocl_object;
 }
 
@@ -388,8 +389,10 @@ overlay_node_foreach (GNode * node, gpointer kpriv_ptr)
           floor ((prediction->bbox.height + prediction->bbox.y) / 2) * 2;
       Size test_rect (new_xmax - new_xmin, new_ymax - new_ymin);
 
+
       if (!(!prediction->bbox.x && !prediction->bbox.y)) {
         g_print ("masodik\n");
+        conv.conv_kernel_init();
         rectangle (frameinfo->lumaImg, Point (new_xmin,
               new_ymin), Point (new_xmax,
               new_ymax), Scalar (yScalar), kpriv->line_thickness, 1, 0);
