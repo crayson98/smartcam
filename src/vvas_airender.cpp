@@ -465,7 +465,7 @@ overlay_node_foreach (GNode * node, gpointer kpriv_ptr)
       for (int i = 0; i < roiHeight; i++) {
               for (int j = 0; j < roiWidth; j++) {
                   for (int k = 0; k < roiChannels; k++) {
-                        frameinfo->image.data[startindex + i * roiHeight * roiChannels + j * roiChannels + k]; = conv.rptr[i * roiHeight * roiChannels + j * roiChannels + k];
+                        frameinfo->image.data[startindex + i * roiHeight * roiChannels + j * roiChannels + k] = conv.rptr[i * roiHeight * roiChannels + j * roiChannels + k];
                   }
               }
           }  
