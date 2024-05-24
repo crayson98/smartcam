@@ -406,15 +406,14 @@ overlay_node_foreach (GNode * node, gpointer kpriv_ptr)
     } else if (frameinfo->inframe->props.fmt == VVAS_VFMT_BGR8) {
       LOG_MESSAGE (LOG_LEVEL_DEBUG, "Drawing rectangle for BGR image");
 
+
+
+
       if (!(!prediction->bbox.x && !prediction->bbox.y)) {
+
+
           std::cout << " Start " << std::endl;
-        /* Draw rectangle over the dectected object */
-        rectangle (frameinfo->image, Point (prediction->bbox.x,
-              prediction->bbox.y),
-          Point (prediction->bbox.width + prediction->bbox.x,
-              prediction->bbox.height + prediction->bbox.y), Scalar (clr.blue,
-              clr.green, clr.red), kpriv->line_thickness, 1, 0);
-        std::cout << " Kezdodik " << std::endl;
+
         
       int x = prediction->bbox.x;
       int y = prediction->bbox.y;
@@ -436,18 +435,31 @@ overlay_node_foreach (GNode * node, gpointer kpriv_ptr)
 
       // Use memcpy to copy each row of the ROI to the new buffer
       for (int row = 0; row < roiHeight; ++row) {
-                memcpy(roiData + row * roiWidth * roiChannels,
-                      this->sptr<uint8_t>(roi.y + row) + roi.x * roiChannels,
+                memcpy(this->sptr<uint8_t>(roi.y + row) + roi.x * roiChannels,
+                      frameinfo->image.data + row * roiWidth * roiChannels,
                       roiWidth * roiChannels);
         }
 
-  
-
       conv.conv_kernel_run(300, 300, nullptr);
+
+      // Use memcpy to copy each row of the ROI data back to the original image
+      for (int row = 0; row < roiHeight; ++row) {
+                 memcpy(frameinfo->image.data + row * roiWidth * roiChannels,
+                      this->rptr<uint8_t>(roi.y + row) + roi.x * roiChannels,
+                      roiWidth * roiChannels);
+      }
+
+      /* Draw rectangle over the dectected object */
+      rectangle (frameinfo->image, Point (prediction->bbox.x,
+              prediction->bbox.y),
+          Point (prediction->bbox.width + prediction->bbox.x,
+              prediction->bbox.height + prediction->bbox.y), Scalar (clr.blue,
+              clr.green, clr.red), kpriv->line_thickness, 1, 0);
+        std::cout << " Kezdodik " << std::endl;
       LOG_MESSAGE(LOG_LEVEL_WARNING, "First element value: %d", this->rptr[0]);
       g_print ("START\n");
 
-        std::cout << " Vege " << std::endl;
+      
       }
 
       if (label_present) {
