@@ -313,6 +313,7 @@ get_label_text (GstInferenceClassification * c, vvas_xoverlaypriv * kpriv,
 static gboolean
 overlay_node_foreach (GNode * node, gpointer kpriv_ptr)
 {
+  g_print ("overlay node eleje\n");
   vvas_xoverlaypriv *kpriv = (vvas_xoverlaypriv *) kpriv_ptr;
   struct overlayframe_info *frameinfo = &(kpriv->frameinfo);
   LOG_MESSAGE (LOG_LEVEL_DEBUG, "enter");
@@ -466,7 +467,7 @@ overlay_node_foreach (GNode * node, gpointer kpriv_ptr)
 
         g_print ("elso elem: %d\n", conv.rptr[0]);
 
-        
+
         // Use memcpy to copy each row of the ROI data back to the original image
       for (int i = 0; i < roiHeight; i++) {
               for (int j = 0; j < roiWidth; j++) {
