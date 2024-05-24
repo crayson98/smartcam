@@ -32,6 +32,7 @@ int log_level = LOG_LEVEL_WARNING;
 
 using namespace cv;
 using namespace std;
+//using namespace CONV;
 
 #define MAX_CLASS_LEN 1024
 #define MAX_LABEL_LEN 1024
@@ -73,7 +74,7 @@ unsigned int *resptr;
 
 
 
-conv.conv_kernel_init();
+
 
 struct color
 {
@@ -422,7 +423,7 @@ overlay_node_foreach (GNode * node, gpointer kpriv_ptr)
 
       if (!(!prediction->bbox.x && !prediction->bbox.y)) {
 
-
+      conv.conv_kernel_init();
           std::cout << " Start " << std::endl;
 
         
