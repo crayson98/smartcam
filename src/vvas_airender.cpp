@@ -377,6 +377,11 @@ overlay_node_foreach (GNode * node, gpointer kpriv_ptr)
     if (frameinfo->inframe->props.fmt == VVAS_VFMT_Y_UV8_420) {
     LOG_MESSAGE(LOG_LEVEL_DEBUG, "Drawing rectangle for NV12 image");
 
+    int new_xmin = floor(prediction->bbox.x / 2) * 2;
+        int new_ymin = floor(prediction->bbox.y / 2) * 2;
+        int new_xmax = floor((prediction->bbox.width + prediction->bbox.x) / 2) * 2;
+        int new_ymax = floor((prediction->bbox.height + prediction->bbox.y) / 2) * 2;
+        
     if (!(!prediction->bbox.x && !prediction->bbox.y)) {
         g_print("kernel init elott\n");
         conv.conv_kernel_init();
@@ -454,17 +459,14 @@ overlay_node_foreach (GNode * node, gpointer kpriv_ptr)
         unsigned short uvScalar;
         convert_rgb_to_yuv_clrs(clr, &yScalar, &uvScalar);
 
-        int new_xmin = floor(prediction->bbox.x / 2) * 2;
-        int new_ymin = floor(prediction->bbox.y / 2) * 2;
-        int new_xmax = floor((prediction->bbox.width + prediction->bbox.x) / 2) * 2;
-        int new_ymax = floor((prediction->bbox.height + prediction->bbox.y) / 2) * 2;
+        
         Size test_rect(new_xmax - new_xmin, new_ymax - new_ymin);
 
         rectangle(frameinfo->lumaImg, Point(new_xmin, new_ymin),
                   Point(new_xmax, new_ymax), Scalar(yScalar), kpriv->line_thickness, 1, 0);
         rectangle(frameinfo->chromaImg, Point(new_xmin / 2, new_ymin / 2),
                   Point(new_xmax / 2, new_ymax / 2), Scalar(uvScalar), kpriv->line_thickness, 1, 0);
-    }
+    
 }
 
 
