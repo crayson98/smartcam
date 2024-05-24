@@ -445,7 +445,7 @@ overlay_node_foreach (GNode * node, gpointer kpriv_ptr)
 
       conv.conv_kernel_run(300, 300, nullptr);
       LOG_MESSAGE(LOG_LEVEL_WARNING, "First element value: %d", this->rptr[0]);
-
+      g_print ("START\n");
 
         std::cout << " Vege " << std::endl;
       }

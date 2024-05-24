@@ -401,6 +401,9 @@ static int CheckCoexistSrc()
 int
 main (int argc, char *argv[])
 {
+
+    g_print ("START\n");
+
     char* pathVar = std::getenv("PATH");
     std::string setPath = std::string("PATH=") + std::string(pathVar) + ":/usr/sbin:/sbin";
     putenv((char*)setPath.c_str());
