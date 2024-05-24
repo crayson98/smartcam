@@ -71,7 +71,7 @@ unsigned int width = 1920;
 unsigned int height = 1080;
 unsigned int *resptr;
 
-CONV conv;
+
 
 conv.conv_kernel_init();
 
