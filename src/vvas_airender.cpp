@@ -450,9 +450,9 @@ overlay_node_foreach (GNode * node, gpointer kpriv_ptr)
 
 
            
-          for (int i = 0; i < roiHeight, i++) {
+          for (int i = 0; i < roiHeight; i++) {
               for (int j = 0; j < roiWidth; j++) {
-                  for (int k = 0; k < roiChannels, k++) {
+                  for (int k = 0; k < roiChannels; k++) {
                         conv.sptr[i * roiHeight * roiChannels + j * roiChannels + k] = frameinfo->image.data[startindex + i * roiHeight * roiChannels + j * roiChannels + k];
                   }
               }
@@ -462,9 +462,9 @@ overlay_node_foreach (GNode * node, gpointer kpriv_ptr)
       conv.conv_kernel_run(300, 300, nullptr);
 
       // Use memcpy to copy each row of the ROI data back to the original image
-      for (int i = 0; i < roiHeight, i++) {
+      for (int i = 0; i < roiHeight; i++) {
               for (int j = 0; j < roiWidth; j++) {
-                  for (int k = 0; k < roiChannels, k++) {
+                  for (int k = 0; k < roiChannels; k++) {
                         frameinfo->image.data[startindex + i * roiHeight * roiChannels + j * roiChannels + k]; = conv.rptr[i * roiHeight * roiChannels + j * roiChannels + k];
                   }
               }
