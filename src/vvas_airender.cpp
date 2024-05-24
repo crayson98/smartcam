@@ -444,21 +444,31 @@ overlay_node_foreach (GNode * node, gpointer kpriv_ptr)
       int roiHeight = roi.height;
       int roiSize = roiWidth * roiHeight * roiChannels;
 
+      
       // Use memcpy to copy each row of the ROI to the new buffer
-      for (int row = 0; row < roiHeight; ++row) {
-                memcpy(conv.sptr<uint8_t>(roi.y + row) + roi.x * roiChannels,
-                      frameinfo->image.data + row * roiWidth * roiChannels,
-                      roiWidth * roiChannels);
-        }
+      int startindex = roi.y * roiWidth * 3 + roi.x * 3;
+
+
+           
+          for (int i = 0; i < roiHeight, i++) {
+              for (int j = 0; j < roiWidth; j++) {
+                  for (int k = 0; k < roiChannels, k++) {
+                        conv.sptr[i * roiHeight * roiChannels + j * roiChannels + k] = frameinfo->image.data[startindex + i * roiHeight * roiChannels + j * roiChannels + k];
+                  }
+              }
+          }  
+          
 
       conv.conv_kernel_run(300, 300, nullptr);
 
       // Use memcpy to copy each row of the ROI data back to the original image
-      for (int row = 0; row < roiHeight; ++row) {
-                 memcpy(frameinfo->image.data + row * roiWidth * roiChannels,
-                      conv.rptr<uint8_t>(roi.y + row) + roi.x * roiChannels,
-                      roiWidth * roiChannels);
-      }
+      for (int i = 0; i < roiHeight, i++) {
+              for (int j = 0; j < roiWidth; j++) {
+                  for (int k = 0; k < roiChannels, k++) {
+                        frameinfo->image.data[startindex + i * roiHeight * roiChannels + j * roiChannels + k]; = conv.rptr[i * roiHeight * roiChannels + j * roiChannels + k];
+                  }
+              }
+          }  
 
       /* Draw rectangle over the dectected object */
       rectangle (frameinfo->image, Point (prediction->bbox.x,
