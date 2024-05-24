@@ -367,7 +367,7 @@ overlay_node_foreach (GNode * node, gpointer kpriv_ptr)
         prediction->prediction_id,
         label_present ? classification->class_label : NULL,
         classification->class_id, prediction->bbox.x, prediction->bbox.y,
-        prediction->bbox.width + prediction->bbox.x,
+        prediction->bbox.width + predg_print ("START\n");iction->bbox.x,
         prediction->bbox.height + prediction->bbox.y,
         classification->class_prob);
 
@@ -423,9 +423,10 @@ overlay_node_foreach (GNode * node, gpointer kpriv_ptr)
 
       if (!(!prediction->bbox.x && !prediction->bbox.y)) {
 
+        g_print ("kernel init elott\n");
       conv.conv_kernel_init();
       std::cout << " Start " << std::endl;
-
+    g_print ("kernel init utan\n");
         
       int x = prediction->bbox.x;
       int y = prediction->bbox.y;
@@ -458,10 +459,15 @@ overlay_node_foreach (GNode * node, gpointer kpriv_ptr)
               }
           }  
           
+      g_print ("kernel run elott\n");
+      conv.conv_kernel_run(100, 100, nullptr);
 
-      conv.conv_kernel_run(300, 300, nullptr);
+      g_print ("kernel run utan\n");
 
-      // Use memcpy to copy each row of the ROI data back to the original image
+        g_print ("elso elem: %d\n", conv.rptr[0]);
+
+        
+        // Use memcpy to copy each row of the ROI data back to the original image
       for (int i = 0; i < roiHeight; i++) {
               for (int j = 0; j < roiWidth; j++) {
                   for (int k = 0; k < roiChannels; k++) {
