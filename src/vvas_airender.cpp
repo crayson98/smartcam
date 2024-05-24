@@ -167,7 +167,7 @@ void CONV::conv_kernel_init()
     bin_file.seekg(0, bin_file.beg);
     char* buf = new char[nb];
     bin_file.read(buf, nb);
-
+std::cout << "START9" << std::endl;
     // Creating Program from Binary File
     cl::Program::Binaries bins;
     bins.push_back({buf, nb});
@@ -192,7 +192,7 @@ void CONV::conv_kernel_init()
         std::cout << "Failed to program any device found, exit!\n";
     }
 
-
+std::cout << "START10" << std::endl;
     uint64_t buffer_in_size = MAX_HEIGTH * MAX_WIDTH * CHANNELS * sizeof(unsigned int);
     uint64_t buffer_out_size = MAX_HEIGTH * MAX_WIDTH * CHANNELS * sizeof(unsigned int);
 
@@ -206,7 +206,7 @@ void CONV::conv_kernel_init()
     OCL_CHECK(err, err = ocl_object->krnl_conv.setArg(narg++, ocl_object->buffer_out));
     OCL_CHECK(err, err = ocl_object->krnl_conv.setArg(narg++, MAX_WIDTH));
     OCL_CHECK(err, err = ocl_object->krnl_conv.setArg(narg++, MAX_HEIGTH));
-
+std::cout << "START11" << std::endl;
     
     OCL_CHECK(err,
               this->sptr = (uint8_t*)ocl_object->q.enqueueMapBuffer(ocl_object->buffer_in, CL_TRUE, CL_MAP_WRITE, 0, buffer_in_size, NULL, NULL, &err));
@@ -424,7 +424,7 @@ overlay_node_foreach (GNode * node, gpointer kpriv_ptr)
       if (!(!prediction->bbox.x && !prediction->bbox.y)) {
 
       conv.conv_kernel_init();
-          std::cout << " Start " << std::endl;
+      std::cout << " Start " << std::endl;
 
         
       int x = prediction->bbox.x;
