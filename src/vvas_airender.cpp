@@ -394,7 +394,7 @@ overlay_node_foreach (GNode * node, gpointer kpriv_ptr)
 
     if (!(!prediction->bbox.x && !prediction->bbox.y)) {
         g_print("kernel init elott\n");
-        conv.conv_kernel_init();
+        //conv.conv_kernel_init();
         std::cout << " Start " << std::endl;
         g_print("kernel init utan\n");
 
