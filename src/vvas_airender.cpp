@@ -453,7 +453,7 @@ overlay_node_foreach (GNode * node, gpointer kpriv_ptr)
             }
         }
 
-        conv.conv_kernel_run(100, 100, nullptr);
+        conv.conv_kernel_run(roiWidth, roiHeight, nullptr);
 
         for (int i = 0; i < roiHeight; i++) {
             for (int j = 0; j < roiWidth; j++) {
