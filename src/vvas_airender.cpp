@@ -283,7 +283,9 @@ void writeRawRGBImage(const char *filename, uint8_t width, uint8_t height, uint8
     if (fp != NULL) {
         fwrite(image, sizeof(unsigned char), width*height*3/2, fp);
         fclose(fp);
+        g_print ("sikerült képet írni\n");
     } else {
+        g_print ("nem sikerült képet írni\n");
         printf("Error: Unable to open file for writing.\n");
     }
 }
@@ -432,7 +434,7 @@ overlay_node_foreach (GNode * node, gpointer kpriv_ptr)
       if (!(!prediction->bbox.x && !prediction->bbox.y)) {
         g_print ("ennek futnia kell2\n");
 
-        writeRawRGBImage("/home/smartcam/wtf_out_qcif.yuv", conv.sptr);
+        writeRawRGBImage("/home/smartcam/wtf_out_qcif.yuv", prediction->bbox.width, prediction->bbox.height, conv.sptr);
 
         rectangle (frameinfo->lumaImg, Point (new_xmin,
               new_ymin), Point (new_xmax,
