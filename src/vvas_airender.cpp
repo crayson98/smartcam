@@ -254,16 +254,6 @@ void CONV::conv_kernel_run(unsigned int width, unsigned int height, unsigned int
     std::cout << "FINISH " << std::endl;
 }
 
-void writeRawRGBImage(const char *filename, uint8_t image[1920*1080*3]) {
-    FILE *fp = fopen(filename, "wb");
-    if (fp != NULL) {
-        fwrite(image, sizeof(unsigned char), 1920*1080*3, fp);
-        fclose(fp);
-    } else {
-        printf("Error: Unable to open file for writing.\n");
-    }
-}
-
 /* Check if the given classification is to be filtered */
 int
 vvas_classification_is_allowed (char *cls_name, vvas_xoverlaypriv * kpriv)
