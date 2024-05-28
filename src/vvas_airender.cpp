@@ -382,8 +382,7 @@ overlay_node_foreach (GNode * node, gpointer kpriv_ptr)
         classification->class_prob);
 
     /* Check whether the frame is NV12 or BGR and act accordingly */
-    if (frameinfo->inframe->props.fmt == IVAS_VFMT_Y_UV8_420) {
-      g_print ("csak ez fut le0\n");
+    if (frameinfo->inframe->props.fmt == VVAS_VFMT_Y_UV8_420) {
       LOG_MESSAGE (LOG_LEVEL_DEBUG, "Drawing rectangle for NV12 image");
       unsigned char yScalar;
       unsigned short uvScalar;
@@ -396,16 +395,14 @@ overlay_node_foreach (GNode * node, gpointer kpriv_ptr)
       int new_ymax =
           floor ((prediction->bbox.height + prediction->bbox.y) / 2) * 2;
       Size test_rect (new_xmax - new_xmin, new_ymax - new_ymin);
-      g_print ("csak ez fut le1\n");
+
       if (!(!prediction->bbox.x && !prediction->bbox.y)) {
-        g_print ("csak ez fut le2\n");
         rectangle (frameinfo->lumaImg, Point (new_xmin,
               new_ymin), Point (new_xmax,
               new_ymax), Scalar (yScalar), kpriv->line_thickness, 1, 0);
         rectangle (frameinfo->chromaImg, Point (new_xmin / 2,
               new_ymin / 2), Point (new_xmax / 2,
               new_ymax / 2), Scalar (uvScalar), kpriv->line_thickness, 1, 0);
-              g_print ("csak ez fut le3\n");
       }
 
       if (label_present) {
