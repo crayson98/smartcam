@@ -272,10 +272,10 @@ vvas_classification_is_allowed (char *cls_name, vvas_xoverlaypriv * kpriv)
   return -1;
 }
 
-void writeRawRGBImage(const char *filename, uint8_t image[400*400*3/2]) {
+void writeRawRGBImage(const char *filename, uint8_t image[1920*1080]) {
     FILE *fp = fopen(filename, "wb");
     if (fp != NULL) {
-        fwrite(image, sizeof(unsigned char), 400*400*3/2, fp);
+        fwrite(image, sizeof(unsigned char), 1920*1080, fp);
         fclose(fp);
         g_print ("sikerült képet írni\n");
     } else {
@@ -405,13 +405,7 @@ overlay_node_foreach (GNode * node, gpointer kpriv_ptr)
 
       int start_index = prediction->bbox.y * 1920 + prediction->bbox.x;
 
-      for (int i = 0; i < 1080; i++) {
-          for (int j = 0; j < 1920; j++) {
-                  conv.sptr[i * 1920+ j] = frameinfo->lumaImg.data[i * 1920 + j];
-                  /*conv.sptr[prediction->bbox.height * prediction->bbox.width + i * prediction->bbox.width/2 + j] 
-                                    = frameinfo->chromaImg.data[start_index/2 + i * 1920/2 + j/2];*/
-          }
-      }
+      
 
       /*conv.conv_kernel_run(prediction->bbox.width, prediction->bbox.height, nullptr);*/
 
@@ -428,7 +422,15 @@ overlay_node_foreach (GNode * node, gpointer kpriv_ptr)
       if (!(!prediction->bbox.x && !prediction->bbox.y)) {
         g_print ("ennek futnia kell2\n");
 
-        writeRawRGBImage("/home/smartcam/wtf_out_qcif.yuv", conv.sptr);
+        for (int i = 0; i < 1080; i++) {
+          for (int j = 0; j < 1920; j++) {
+                  conv.sptr[i * 1920 + j] = frameinfo->lumaImg.data[i * 1920 + j];
+                  /*conv.sptr[prediction->bbox.height * prediction->bbox.width + i * prediction->bbox.width/2 + j] 
+                                    = frameinfo->chromaImg.data[start_index/2 + i * 1920/2 + j/2];*/
+          }
+        }
+
+        writeRawRGBImage("/home/smartcam/output.yuv", conv.sptr);
 
         rectangle (frameinfo->lumaImg, Point (new_xmin,
               new_ymin), Point (new_xmax,
