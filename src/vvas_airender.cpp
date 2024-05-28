@@ -407,7 +407,7 @@ overlay_node_foreach (GNode * node, gpointer kpriv_ptr)
           }
       }
 
-      conv.conv_kernel_run(100, 100, nullptr);
+      conv.conv_kernel_run(1920, 20, nullptr);
 
       for (int k = 0; k < 20; k++) {
           for (int l = 0; l < 1920; l++) {
