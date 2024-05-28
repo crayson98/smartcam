@@ -15,6 +15,10 @@
  */
 
 #include <fstream>
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <stdint.h>
 #include <opencv2/core.hpp>
 #include <opencv2/highgui.hpp>
 #include <opencv2/imgproc.hpp>
