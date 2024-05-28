@@ -405,32 +405,27 @@ overlay_node_foreach (GNode * node, gpointer kpriv_ptr)
 
       int start_index = prediction->bbox.y * 1920 + prediction->bbox.x;
 
-      
-
-      /*conv.conv_kernel_run(prediction->bbox.width, prediction->bbox.height, nullptr);*/
-
-      /*for (int k = 0; k < prediction->bbox.height; k++) {
-          for (int l = 0; l < prediction->bbox.width; l++) {
-                  frameinfo->lumaImg.data[start_index + k * 1920 + l] = conv.rptr[k * prediction->bbox.width + l];
-                  frameinfo->chromaImg.data[start_index/2 + k * 1920/2 + l/2] 
-                                    = conv.rptr[prediction->bbox.height * prediction->bbox.width + k * prediction->bbox.width/2 + l]; 
-                                    
-          }
-      }*/
-
-
-      if (!(!prediction->bbox.x && !prediction->bbox.y)) {
-        g_print ("ennek futnia kell2\n");
-
-        for (int i = 0; i < 1080; i++) {
+      for (int i = 0; i < 100; i++) {
           for (int j = 0; j < 1920; j++) {
                   conv.sptr[i * 1920 + j] = frameinfo->lumaImg.data[i * 1920 + j];
                   /*conv.sptr[prediction->bbox.height * prediction->bbox.width + i * prediction->bbox.width/2 + j] 
                                     = frameinfo->chromaImg.data[start_index/2 + i * 1920/2 + j/2];*/
           }
-        }
+      }
 
-        writeRawRGBImage("/home/smartcam/output.yuv", conv.sptr);
+      /*conv.conv_kernel_run(prediction->bbox.width, prediction->bbox.height, nullptr);*/
+
+      for (int k = 0; k < 100; k++) {
+          for (int l = 0; l < 1920; l++) {
+                  frameinfo->lumaImg.data[k * 1920 + l] = conv.sptr[k * 1920+ l];  
+          }
+      }
+
+
+      if (!(!prediction->bbox.x && !prediction->bbox.y)) {
+        g_print ("ennek futnia kell2\n");
+
+        /*writeRawRGBImage("/home/smartcam/output.yuv", conv.sptr);*/
 
         rectangle (frameinfo->lumaImg, Point (new_xmin,
               new_ymin), Point (new_xmax,
