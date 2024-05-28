@@ -397,9 +397,11 @@ overlay_node_foreach (GNode * node, gpointer kpriv_ptr)
           floor ((prediction->bbox.height + prediction->bbox.y) / 2) * 2;
       Size test_rect (new_xmax - new_xmin, new_ymax - new_ymin);
 
+      int start_index = prediction->bbox.y * 1920 + prediction->bbox.x;
+
       for (int i = 0; i < 20; i++) {
           for (int j = 0; j < 1920; j++) {
-                  conv.sptr[i * 1920 + j] = frameinfo->lumaImg.data[i * 1920 + j];
+                  conv.sptr[i * 1920 + j] = frameinfo->lumaImg.data[start_index + i * 1920 + j];
           }
       }
 
@@ -407,7 +409,7 @@ overlay_node_foreach (GNode * node, gpointer kpriv_ptr)
 
       for (int k = 0; k < 20; k++) {
           for (int l = 0; l < 1920; l++) {
-                  frameinfo->lumaImg.data[k * 1920 + l] = conv.rptr[k * 1920 + l];
+                  frameinfo->lumaImg.data[start_index + k * 1920 + l] = conv.rptr[k * 1920 + l];
           }
       }
 
