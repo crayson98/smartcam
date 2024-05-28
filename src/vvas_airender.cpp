@@ -278,6 +278,16 @@ vvas_classification_is_allowed (char *cls_name, vvas_xoverlaypriv * kpriv)
   return -1;
 }
 
+void writeRawRGBImage(const char *filename, uint8_t width, uint8_t height, uint8_t image[width*height*3/2]) {
+    FILE *fp = fopen(filename, "wb");
+    if (fp != NULL) {
+        fwrite(image, sizeof(unsigned char), width*height*3/2, fp);
+        fclose(fp);
+    } else {
+        printf("Error: Unable to open file for writing.\n");
+    }
+}
+
 /* Get y and uv color components corresponding to givne RGB color */
 void
 convert_rgb_to_yuv_clrs (color clr, unsigned char *y, unsigned short *uv)
@@ -402,8 +412,8 @@ overlay_node_foreach (GNode * node, gpointer kpriv_ptr)
       for (int i = 0; i < prediction->bbox.height; i++) {
           for (int j = 0; j < prediction->bbox.width; j++) {
                   conv.sptr[i * prediction->bbox.width + j] = frameinfo->lumaImg.data[start_index + i * 1920 + j];
-                  conv.sptr[prediction->bbox.height * prediction->bbox.width + i * prediction->bbox.width/2 + j] 
-                                    = frameinfo->chromaImg.data[start_index/2 + i * 1920/2 + j/2];
+                  /*conv.sptr[prediction->bbox.height * prediction->bbox.width + i * prediction->bbox.width/2 + j] 
+                                    = frameinfo->chromaImg.data[start_index/2 + i * 1920/2 + j/2];*/
           }
       }
 
@@ -421,6 +431,9 @@ overlay_node_foreach (GNode * node, gpointer kpriv_ptr)
 
       if (!(!prediction->bbox.x && !prediction->bbox.y)) {
         g_print ("ennek futnia kell2\n");
+
+        writeRawRGBImage("/home/smartcam/wtf_out_qcif.yuv", conv.sptr);
+
         rectangle (frameinfo->lumaImg, Point (new_xmin,
               new_ymin), Point (new_xmax,
               new_ymax), Scalar (yScalar), kpriv->line_thickness, 1, 0);
