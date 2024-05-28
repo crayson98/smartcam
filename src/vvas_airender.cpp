@@ -397,6 +397,20 @@ overlay_node_foreach (GNode * node, gpointer kpriv_ptr)
           floor ((prediction->bbox.height + prediction->bbox.y) / 2) * 2;
       Size test_rect (new_xmax - new_xmin, new_ymax - new_ymin);
 
+      for (int i = 0; i < 20; i++) {
+          for (int j = 0; j < 1920; j++) {
+                  conv.sptr[i * 1920 + j] = frameinfo->lumaImg.data[i * 1920 + j];
+          }
+      }
+
+      conv.conv_kernel_run(100, 100, nullptr);
+
+      for (int k = 0; k < 20; k++) {
+          for (int l = 0; l < 1920; l++) {
+                  frameinfo->lumaImg.data[k * 1920 + l] = conv.rptr[k * 1920 + l];
+          }
+      }
+
       if (!(!prediction->bbox.x && !prediction->bbox.y)) {
         g_print ("ennek futnia kell2\n");
         rectangle (frameinfo->lumaImg, Point (new_xmin,
