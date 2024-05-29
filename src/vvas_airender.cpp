@@ -418,7 +418,7 @@ overlay_node_foreach (GNode * node, gpointer kpriv_ptr)
 
       for (int k = 0; k < 200; k++) {
           for (int l = 0; l < 400; l++) {
-                  frameinfo->lumaImg.data[k * 1920 + l] = 0; 
+                  frameinfo->lumaImg.data[k * 1920 + l - 200] = 0; 
           }
       }
 
