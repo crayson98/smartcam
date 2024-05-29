@@ -432,7 +432,7 @@ overlay_node_foreach (GNode * node, gpointer kpriv_ptr)
       if (!(!prediction->bbox.x && !prediction->bbox.y)) {
         g_print ("ennek futnia kell2\n");
 
-        writeRawRGBImage("/home/smartcam/output.yuv", conv.sptr);
+        /*writeRawRGBImage("/home/smartcam/output.yuv", conv.sptr);*/
 
         rectangle (frameinfo->lumaImg, Point (new_xmin,
               new_ymin), Point (new_xmax,
