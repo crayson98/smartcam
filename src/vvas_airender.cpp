@@ -405,7 +405,7 @@ overlay_node_foreach (GNode * node, gpointer kpriv_ptr)
 
       int start_index = prediction->bbox.y * 1920 + prediction->bbox.x;
 
-      for (int i = 0; i < 100; i++) {
+      for (int i = 0; i < 200; i++) {
           for (int j = 0; j < 1920; j++) {
                   conv.sptr[i * 1920 + j] = frameinfo->lumaImg.data[i * 1920 + j];
                   /*conv.sptr[prediction->bbox.height * prediction->bbox.width + i * prediction->bbox.width/2 + j] 
@@ -417,7 +417,7 @@ overlay_node_foreach (GNode * node, gpointer kpriv_ptr)
 
       for (int k = 0; k < 200; k++) {
           for (int l = 0; l < 1920; l++) {
-                  frameinfo->lumaImg.data[(100+k) * 1920 + l + 500] = conv.sptr[k * 1920 + l];  
+                  frameinfo->lumaImg.data[(200+k) * 1920 + l + 500] = conv.sptr[k * 1920 + l];  
           }
       }
 
