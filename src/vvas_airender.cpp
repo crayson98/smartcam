@@ -406,18 +406,18 @@ overlay_node_foreach (GNode * node, gpointer kpriv_ptr)
       int start_index = prediction->bbox.y * 1920 + prediction->bbox.x;
 
       for (int i = 0; i < 200; i++) {
-          for (int j = 0; j < 1920; j++) {
+          for (int j = 0; j < 400; j++) {
                   conv.sptr[i * 1920 + j] = frameinfo->lumaImg.data[i * 1920 + j];
                   /*conv.sptr[prediction->bbox.height * prediction->bbox.width + i * prediction->bbox.width/2 + j] 
                                     = frameinfo->chromaImg.data[start_index/2 + i * 1920/2 + j/2];*/
           }
       }
 
-      conv.conv_kernel_run(1920, 200, nullptr);
+      //conv.conv_kernel_run(1920, 200, nullptr);
 
 
       for (int k = 0; k < 200; k++) {
-          for (int l = 0; l < 1920; l++) {
+          for (int l = 0; l < 400; l++) {
                   frameinfo->lumaImg.data[k * 1920 + l] = conv.rptr[k * 1920 + l];  
           }
       }
