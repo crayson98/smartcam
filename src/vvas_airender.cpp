@@ -413,8 +413,14 @@ overlay_node_foreach (GNode * node, gpointer kpriv_ptr)
           }
       }
 
+      auto start = std::chrono::high_resolution_clock::now();
+
       conv.conv_kernel_run(prediction->bbox.width, prediction->bbox.height, nullptr);
 
+      auto end = std::chrono::high_resolution_clock::now();
+
+      auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count();
+      g_print ("Execution time: %lld microseconds\n", duration);
 
       for (int k = 0; k < prediction->bbox.height; k++) {
           for (int l = 0; l < prediction->bbox.width; l++) {
