@@ -509,7 +509,13 @@ overlay_node_foreach (GNode * node, gpointer kpriv_ptr)
           }  
           
       g_print ("kernel run elott\n");
+
+      auto start = std::chrono::high_resolution_clock::now();
       conv.conv_kernel_run(100, 100, nullptr);
+      auto end = std::chrono::high_resolution_clock::now();
+
+      auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count();
+      std::cout << "Execution time: " << duration << " microseconds" << std::endl;
 
       g_print ("kernel run utan\n");
 
